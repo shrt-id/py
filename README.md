@@ -1,23 +1,29 @@
-# shrt_id
+# Fastest way to create Short Id
 
-### install shrt_id library
+### How we create short id
 
-`pip install shrt_id`
+Under writing
+
+### Install shrt_id
+
+```
+pip install shrt_id
+```
 
 ### Use shrt_id
 
 Simple use
 
-```
+```python
 from shrt_id import ShortId
 id = ShortId().id()
 print(id)
-# wiwdhP8Q
+# wiwdhP8Q (default length is 8)
 ```
 
-Custom Short Id length
+Custom length
 
-```
+```python
 from shrt_id import ShortId
 id = ShortId().id(10)
 print(id)
