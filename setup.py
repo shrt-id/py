@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='shrt_id',
-    version='0.1.5',
+    version='0.1.7',
     license='GNU',
     author="keocoin",
     author_email='keocoin@gmail.com',
