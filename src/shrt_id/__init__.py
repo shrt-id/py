@@ -31,8 +31,11 @@ class ShortId:
         if l == None:
             l = DEFALT_LENGTH
 
-        date_now = datetime.datetime.now()
-        base_index = date_now.strftime("%d%m%y%H%M%S")
-        random_index = self.random_n_index(n=(l - BASE_LEN))
-        index = base_index + random_index
+        if l < 8:
+            index = self.random_n_index(n=l)
+        else:
+            date_now = datetime.datetime.now()
+            index = date_now.strftime("%d%m%y%H%M%S")
+            random_index = self.random_n_index(n=(l - BASE_LEN))
+            index += random_index
         return self.convert_index_to_id(index=index)
