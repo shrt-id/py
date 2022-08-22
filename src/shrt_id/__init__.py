@@ -1,41 +1,38 @@
-import datetime
+from datetime import datetime
+import time
 import string
 import random
 
 DEFALT_LENGTH = 8
-BASE_LEN = 6
-AZ09 = string.ascii_letters + string.digits
-LEN_AZ09 = 62
+alpha = string.ascii_letters + string.digits
+alpha_len = len(alpha)
 
 
 class ShortId:
-    def __init__(self) -> None:
+    def __init__(self, shard: int = 60, start_date: datetime = datetime(2020, 1, 1)) -> None:
+        self.start_timestamp_block = round(start_date.timestamp() * 10)
+        self.shard = shard
         pass
 
-    def convert_index_to_id(self, index):
-        result = ""
-        step = 2
-        for i in range(0, len(index), step):
-            c_index = int(index[i:i+step])
-            result += AZ09[c_index]
-        return result
+    def number_to_string(self, number: int):
+        output = ""
+        while number:
+            number, digit = divmod(number, alpha_len)
+            output = alpha[digit] + output
+        return output
 
-    def random_n_index(self, n):
-        result = ""
-        while(n > 0):
-            result += str(random.randint(0, LEN_AZ09 - 1)).zfill(2)
-            n -= 1
-        return result
+    def string_from_timestamp(self):
+        number = round(time.time() * 10) - self.start_timestamp_block
+        return self.number_to_string(number=number)
 
-    def id(self, l=8):
-        if l == None:
-            l = DEFALT_LENGTH
+    def random_shard(self):
+        idx = random.randint(0, 60)
+        return alpha[idx]
 
-        if l < 8:
-            index = self.random_n_index(n=l)
-        else:
-            date_now = datetime.datetime.now()
-            index = date_now.strftime("%d%m%y%H%M%S")
-            random_index = self.random_n_index(n=(l - BASE_LEN))
-            index += random_index
-        return self.convert_index_to_id(index=index)
+    def id(self, l: int = DEFALT_LENGTH):
+        time_id = self.string_from_timestamp()
+        shard_id = self.random_shard()
+        rand_id_l = l - len(time_id) - 1
+        rand_id = "".join(random.choices(alpha, k=rand_id_l))
+
+        return "{}{}{}".format(time_id, rand_id, shard_id)
