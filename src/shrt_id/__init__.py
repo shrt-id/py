@@ -37,10 +37,6 @@ class ShortId:
         return "".join(random.choices(self.alpha, k=l))
 
     def id(self, l: int = DEFALT_LENGTH):
-        _id, _ = self.id_with_shard(l=l)
-        return _id
-
-    def id_with_shard(self, l: int = DEFALT_LENGTH):
         time_id = self.string_from_timestamp()
         if(l < 7):
             rand_id_l = 2
@@ -48,9 +44,12 @@ class ShortId:
             rand_id_l = l - len(time_id)
 
         rand_id = self.rand_string(l=rand_id_l)
-        shard_seq = self.string_to_int(rand_id) % self.shard
+        return "{}{}".format(time_id, rand_id)[-l:]
 
-        return "{}{}".format(time_id, rand_id)[-l:], shard_seq
+    def id_with_shard(self, l: int = DEFALT_LENGTH):
+        _id = self.id(l=l)
+        shard_seq = self.string_to_int(_id[-min(l, 3):]) % self.shard
+        return _id, shard_seq
 
     def decode(self, id: str):
         time_id = None
@@ -68,7 +67,10 @@ class ShortId:
         random_seq = self.string_to_int(random_string)
         shard_seq = random_seq % self.shard
 
-        return {"shard_seq": shard_seq,
-                "dt": dt,
-                "random_string": random_string,
-                "random_seq": random_seq}
+        return {
+            "id": id,
+            "shard_seq": shard_seq,
+            "dt": dt,
+            "random_string": random_string,
+            "random_seq": random_seq
+        }
